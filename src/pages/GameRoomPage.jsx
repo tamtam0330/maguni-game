@@ -1,11 +1,25 @@
+import { useEffect, useRef } from 'react';
 import { joinSession, leaveSession } from '../../openvidu/app_openvidu.js';
 import { useLocation } from 'react-router-dom';
+import { startFaceDetection } from '../apis/FaceDetection.js'; // FaceDetection.js의 경로로 변경
 
 const GameRoomPage = () => {
     const location = useLocation();
     const username = location.state?.username;
     const roomcode = location.state?.roomcode;
-    console.log(username, roomcode);
+
+    // 비디오 및 캔버스 참조
+    const videoRef = useRef(null);
+    const canvasRef = useRef(null);
+
+    useEffect(() => {
+        // 얼굴 인식 시작
+        if (videoRef.current) {
+            console.log("Face Detection Test");
+            startFaceDetection(videoRef.current, canvasRef.current, '/img/sunglasses.png');
+        }
+    }, []);
+
     return (
         <>
             <nav className="navbar navbar-default">
@@ -30,7 +44,7 @@ const GameRoomPage = () => {
                     <div id="join-dialog" className="jumbotron vertical-center">
                         <h1>Join a video session</h1>
                         <form className="form-group" onSubmit={(e) => {
-                            e.preventDefault();  // 기본 제출 동작 방지
+                            e.preventDefault();
                             joinSession();
                         }}>
                             <p>
@@ -59,7 +73,8 @@ const GameRoomPage = () => {
                     </div>
                     <div id="main-video" className="col-md-6">
                         <p></p>
-                        <video autoPlay playsInline={true}></video>
+                        <video ref={videoRef} autoPlay playsInline></video> {/* 비디오 요소에 ref 추가 */}
+                        <canvas ref={canvasRef} width="640" height="480" style={{ display: 'none' }}></canvas> {/* 캔버스 요소 추가 */}
                         <div style={{ margin: '10px' }}>
                             <button id="startButton">게임 시작</button>
                             <button id="stopButton" disabled>게임 종료</button>
