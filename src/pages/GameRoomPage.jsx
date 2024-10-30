@@ -32,7 +32,7 @@ const GameRoomPage = () => {
             ctx.clearRect(0, 0, videoSize.width, videoSize.height);
     
             if (face[0]) {
-                const { x, y, width, height, angle } = calculateFilterPosition(face[0].keypoints);
+                const { x, y, width, height, angle } = calculateFilterPosition("faceFilter",face[0].keypoints);
     
                 ctx.save(); // 현재 캔버스 상태 저장
                 ctx.translate(x + width / 2, y + height / 2); // 필터의 중심으로 이동
@@ -51,7 +51,7 @@ const GameRoomPage = () => {
         initialLoadedRef.current = true;
 
         const image = new Image();
-        image.src = "sunglasses.png";
+        image.src = "Doge.png";
 
         setStatus("Load Model...");
 
@@ -134,7 +134,7 @@ const GameRoomPage = () => {
                             <div id="count">금칙어(아니) 카운트: 0</div>
                         </div>
                     </div>
-                    <div id="video-container" className="col-md-6"></div>
+                    <div id="video-container" className="col-md-6"><button>subscriber 필터 시작</button></div>
                     <div id="subtitles" style={{
                         position: 'absolute',
                         bottom: '10px',
