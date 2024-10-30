@@ -21,20 +21,24 @@ const GameRoomPage = () => {
     const [status, setStatus] = useState("Initializing...");
 
     const estimateFacesLoop = (model, image, ctx) => {
-
         const videoElement = document.getElementById('myVideo');
-
+    
         if (!videoElement) {
-            console.log("취소됨")
+            console.log("취소됨");
             return;
-
         }
-
+    
         model.estimateFaces(videoElement).then((face) => {
             ctx.clearRect(0, 0, videoSize.width, videoSize.height);
+    
             if (face[0]) {
-                const { x, y, width, height } = calculateFilterPosition(face[0].keypoints);
-                ctx.drawImage(image, x, y, width, height);
+                const { x, y, width, height, angle } = calculateFilterPosition(face[0].keypoints);
+    
+                ctx.save(); // 현재 캔버스 상태 저장
+                ctx.translate(x + width / 2, y + height / 2); // 필터의 중심으로 이동
+                ctx.rotate(angle); // 얼굴 각도에 맞춰 회전
+                ctx.drawImage(image, -width / 2, -height / 2, width, height); // 중심을 기준으로 이미지 그리기
+                ctx.restore(); // 원래 캔버스 상태로 복원
             }
             requestAnimationFrame(() => estimateFacesLoop(model, image, ctx));
         });

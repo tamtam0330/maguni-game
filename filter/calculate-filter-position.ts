@@ -6,28 +6,22 @@ const facePoint = {
   leftEyeBottom: 111,
 };
 
-export function calculateFilterPosition(keypoints: Keypoint[]) {
+export function calculateFilterPosition(keypoints) {
+  const xPadding = 45;
+  const yPadding = 20;
 
-  const xPadding = 30;
-  const yPadding = 10;
+  const leftEyeTop = keypoints[facePoint.leftEyeTop];
+  const rightEyeTop = keypoints[facePoint.rightEyeTop];
+  const leftEyeBottom = keypoints[facePoint.leftEyeBottom];
 
-  const x = keypoints[facePoint.leftEyeTop].x - xPadding;
-  const y = keypoints[facePoint.leftEyeTop].y - yPadding;
-  const width =
-    keypoints[facePoint.rightEyeTop].x -
-    keypoints[facePoint.leftEyeTop].x +
-    xPadding * 2;
-  const height =
-    keypoints[facePoint.leftEyeBottom].y -
-    keypoints[facePoint.leftEyeTop].y +
-    yPadding * 2;
+  const x = leftEyeTop.x - xPadding;
+  const y = leftEyeTop.y - yPadding;
+  const width = rightEyeTop.x - leftEyeTop.x + xPadding * 2;
+  const height = leftEyeBottom.y - leftEyeTop.y + yPadding * 2;
 
-  return {
-    x,
-    y,
-    width,
-    height,
-  };
-};
+  // 회전 각도 계산
+  const angle = Math.atan2(rightEyeTop.y - leftEyeTop.y, rightEyeTop.x - leftEyeTop.x);
 
+  return { x, y, width, height, angle };
+}
 
