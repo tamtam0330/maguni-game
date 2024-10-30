@@ -118,16 +118,7 @@ window.onbeforeunload = function () {
 };
 
 
-/* APPLICATION SPECIFIC METHODS */
 
-window.addEventListener('load', function () {
-   generateParticipantInfo();
-});
-
-function generateParticipantInfo() {
-   document.getElementById("sessionId").value = "SessionA";
-   document.getElementById("userName").value = "Participant" + Math.floor(Math.random() * 100);
-}
 
 function appendUserData(videoElement, connection) {
    var userData;
