@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { joinSession, leaveSession } from '../../openvidu/app_openvidu.js';
+import { joinSession, leaveSession, sendFilterSignal } from '../../openvidu/app_openvidu.js';
 import { useLocation } from 'react-router-dom';
 import { calculateFilterPosition } from "../../filter/calculate-filter-position.ts";
 import { loadDetectionModel } from "../../filter/load-detection-model.js";
@@ -15,15 +15,18 @@ const GameRoomPage = () => {
     const username = location.state?.username;
     const roomcode = location.state?.roomcode;
     console.log(username, roomcode);
+    const videoid = "local-video-undefined"
 
-    const canvasRef = useRef(null);
     const initialLoadedRef = useRef(false);
     const [status, setStatus] = useState("Initializing...");
 
-    const estimateFacesLoop = (model, image, ctx) => {
-
-        const videoElement = document.getElementById('myVideo');
-
+    const estimateFacesLoop = (model, image, ctx, videoid) => {
+        console.log(videoid);
+        const videoElement = document.getElementById(`${videoid}`);
+        console.log(videoElement);
+        console.log("1");
+        
+        
         if (!videoElement) {
             console.log("취소됨")
             return;
@@ -40,8 +43,10 @@ const GameRoomPage = () => {
         });
     };
 
-    const startFiltering = () => {
-        const canvasContext = canvasRef.current?.getContext("2d");
+    const startFiltering = (username) => {
+        const canvasElement = document.getElementById("canvas-" + username);
+        const canvasContext = canvasElement.getContext("2d");
+        console.log("asdkfjlasfjasl: "+ canvasElement);
         if (!canvasContext || initialLoadedRef.current) return;
 
         initialLoadedRef.current = true;
@@ -54,7 +59,7 @@ const GameRoomPage = () => {
         loadDetectionModel().then((model) => {
             setStatus("Model Loaded");
             requestAnimationFrame(() =>
-                estimateFacesLoop(model, image, canvasContext),
+                estimateFacesLoop(model, image, canvasContext, videoid),
             );
         });
     };
@@ -83,7 +88,7 @@ const GameRoomPage = () => {
                     <div id="join-dialog" className="jumbotron vertical-center">
                         <h1>Join a video session</h1>
                         <form className="form-group" onSubmit={(e) => {
-                            e.preventDefault();  // 기본 제출 동작 방지
+                            e.preventDefault();  
                             joinSession();
                         }}>
                             <p>
@@ -109,42 +114,11 @@ const GameRoomPage = () => {
                             id="buttonLeaveSession"
                             onClick={() => leaveSession()}
                             value="Leave session" />
-                    </div>
-                    <div id="main-video" className="col-md-6">
-                        <p></p><div className="webcam-container" style={{ position: 'relative', height: videoSize.height, width: videoSize.width }}>
-                            <div style={{ position: 'absolute', top: 0, left: 0 }}>
-                                <video id = "myVideo" autoPlay playsInline width={videoSize.width} height={videoSize.height}></video>
-
-                            </div>
-                            <div style={{ position: 'absolute', top: 0, left: 0 }}>
-                                <canvas ref={canvasRef} width={videoSize.width} height={videoSize.height} className="filter-canvas"></canvas>
-
-                            </div>
-                        </div>
+                        <button onClick={() => {startFiltering(username);}}>필터 시작</button>
                         <p className="status">{status}</p>
+                    </div>
 
-                        <div style={{ margin: '10px' }}>
-                            <button onClick={startFiltering}>필터 시작</button>
-                            <button id="startButton">게임 시작</button>
-                            <button id="stopButton" disabled>게임 종료</button>
-                            <div id="count">금칙어(아니) 카운트: 0</div>
-                        </div>
-                    </div>
                     <div id="video-container" className="col-md-6"></div>
-                    <div id="subtitles" style={{
-                        position: 'absolute',
-                        bottom: '10px',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        color: 'white',
-                        background: 'rgba(0, 0, 0, 0.7)',
-                        padding: '10px',
-                        borderRadius: '5px',
-                        fontSize: '18px',
-                        zIndex: 1000
-                    }}>
-                        자막
-                    </div>
                 </div>
             </div>
 

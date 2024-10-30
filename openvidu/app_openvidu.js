@@ -32,9 +32,27 @@ export function joinSession() {
       subscriber.on('videoElementCreated', event => {
 
          // Add a new <p> element for the user's nickname just below its video
+         appendCanvas(event.element, subscriber.stream.connection);
          appendUserData(event.element, subscriber.stream.connection);
       });
    });
+
+
+
+   session.on('signal:apply-filter', (event) => {
+      const { targetUserId } = JSON.parse(event.data);
+      applyFilterToUser(targetUserId);
+   });
+
+   // function applyFilterToUser(targetUserId) {
+   //    const videoElement = document.getElementById(`video-${targetUserId}`);
+   //    const canvasElement = document.getElementById(`canvas-${targetUserId}`);
+   //    if (videoElement && canvasElement) {
+   //       canvasElement.style.display = 'block';
+   //       // 필터 적용 로직 추가
+   //    }
+   
+
 
    // On every Stream destroyed...
    session.on('streamDestroyed', event => {
@@ -47,7 +65,6 @@ export function joinSession() {
    session.on('exception', (exception) => {
       console.warn(exception);
    });
-
 
    // --- 4) Connect to the session with a valid user token ---
 
@@ -82,7 +99,8 @@ export function joinSession() {
 
             // When our HTML video has been added to DOM...
             publisher.on('videoElementCreated', function (event) {
-               initMainVideo(event.element, myUserName);
+               // initMainVideo(event.element, myUserName);
+               appendCanvas(event.element, myUserName);
                appendUserData(event.element, myUserName);
                event.element['muted'] = true;
             });
@@ -118,7 +136,39 @@ window.onbeforeunload = function () {
 };
 
 
+function appendCanvas(videoElement, connection) {
+   var userData;
+   var nodeId;
+   if (typeof connection === "string") {
+      userData = connection;
+      nodeId = connection;
+   } else {
+      userData = JSON.parse(connection.data).clientData;
+      nodeId = connection.connectionId;
+   }
 
+   // 공통 부모 요소를 생성합니다.
+   const container = document.createElement('div');
+   container.style.position = 'relative';
+   container.style.width = 640;
+   container.style.height = 480;
+
+   // 기존 비디오 요소를 부모 요소로 이동합니다.
+   videoElement.parentNode.insertBefore(container, videoElement);
+   container.appendChild(videoElement);
+
+   var canvas = document.createElement('canvas');
+   canvas.className = "canvas";
+   canvas.id = "canvas-" + userData;
+   canvas.width = 640;
+   canvas.height = 480;
+   canvas.style.position = 'absolute';
+   canvas.style.top = '0';
+   canvas.style.left = '0';
+   canvas.style.zIndex = '1';
+
+   container.appendChild(canvas);
+}
 
 function appendUserData(videoElement, connection) {
    var userData;
@@ -130,43 +180,38 @@ function appendUserData(videoElement, connection) {
       userData = JSON.parse(connection.data).clientData;
       nodeId = connection.connectionId;
    }
-   var dataNode = document.createElement('div');
+   var dataNode = document.createElement('p');
    dataNode.className = "data-node";
    dataNode.id = "data-" + nodeId;
-   dataNode.innerHTML = "<p>" + userData + "</p>";
+   dataNode.innerHTML = userData;
    videoElement.parentNode.insertBefore(dataNode, videoElement.nextSibling);
-   addClickListener(videoElement, userData);
+
+   // var filterButton = document.createElement('button');
+   // filterButton.innerText = "필터 시작";
+   // filterButton.onclick = startFiltering; // 클릭 이벤트 핸들러 연결
+   // videoElement.parentNode.insertBefore(filterButton, videoElement.nextSibling);
 }
+
+
 
 function removeUserData(connection) {
    var dataNode = document.getElementById("data-" + connection.connectionId);
-   dataNode.parentNode.removeChild(dataNode);
+   var container = dataNode.parentNode;
+   container.remove();
 }
 
 function removeAllUserData() {
    var nicknameElements = document.getElementsByClassName('data-node');
    while (nicknameElements[0]) {
-      nicknameElements[0].parentNode.removeChild(nicknameElements[0]);
+      nicknameElements[0].parentNode.remove();
    }
 }
 
-function addClickListener(videoElement, userData) {
-   videoElement.addEventListener('click', function () {
-      var mainVideo = $('#main-video video').get(0);
-      if (mainVideo.srcObject !== videoElement.srcObject) {
-         $('#main-video').fadeOut("fast", () => {
-            $('#main-video p').html(userData);
-            mainVideo.srcObject = videoElement.srcObject;
-            $('#main-video').fadeIn("fast");
-         });
-      }
+export function sendFilterSignal(Username) {
+   session.signal({
+      data: JSON.stringify({ targetUserId }), // 대상 사용자 ID
+      type: 'apply-filter' // 신호 타입 설정
    });
-}
-
-function initMainVideo(videoElement, userData) {
-   document.querySelector('#main-video video').srcObject = videoElement.srcObject;
-   document.querySelector('#main-video p').innerHTML = userData;
-   document.querySelector('#main-video video')['muted'] = true;
 }
 
 
