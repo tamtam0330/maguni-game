@@ -4,13 +4,15 @@ const dotenv = require("dotenv");
 dotenv.config(); // .env 파일의 변수를 불러옵니다.
 const cors = require("cors");
 app.use(cors({
-    origin: "*", // 특정 도메인만 허용
-    methods: ["GET", "POST","PATCH","DELETE"],     // 특정 HTTP 메서드만 허용
-    credentials: true             // 쿠키 공유가 필요한 경우 설정
+    origin: "http://13.124.180.166:5175", // 클라이언트 도메인으로 변경
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+    credentials: true,
 }));
+app.options('*', cors()); // Pre-flight request handling
+
 
 const PORT =  3001;
-const IP = process.env.IP || "127.0.0.1";
+const IP = "0.0.0.0";
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -27,6 +29,6 @@ app.get("*", (_, res) => {
     res.status(404).send("404 Not Found");
 });
 
-app.listen(PORT, IP, () => {
-    console.log("server is running at 3001");
+app.listen(PORT, () => {
+    console.log(`Server is running on https://localhost:${PORT}`);
 });

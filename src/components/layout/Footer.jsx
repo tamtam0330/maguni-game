@@ -2,7 +2,7 @@ import { leaveSession } from '../../../openvidu/app_openvidu';
 import PropTypes from 'prop-types'; 
 import Input from '../common/Input'
 import '../../styles/footer.css'
-import soundOnIcon from '../../assets/images/soundOnIcon.png';
+import soundOnIcon from '../../assets/images/SoundOnIcon.png';
 import soundOffIcon from '../../assets/images/SoundOffIcon.png';
 import treasureCardsIcon from '../../assets/images/treasureCardsIcon.png';
 
