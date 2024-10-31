@@ -104,6 +104,7 @@ function joinRoom() {
 
   function updateforbiddenWordList(list) {
     setForbiddenWords(list);
+    console.log(list);
   }
 
   useEffect(() => {   //소켓 별 이벤트 리스너
@@ -199,7 +200,7 @@ function joinRoom() {
                     <tr>
                       <th scope="col">#</th>
                       <th scope="col">유저</th>
-                      {/* <th scope="col"></th> */}
+                      <th scope="col"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -207,7 +208,7 @@ function joinRoom() {
                       <tr key={index}>
                         <th scope="row">{index + 1}</th>
                         <td>{word.username}</td>
-                        {/* <td>{word.forbiddenword}</td> */}
+                        <td>{word.forbiddenword}</td>
                       </tr>
                     ))}
                   </tbody>

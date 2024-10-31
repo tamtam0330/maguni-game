@@ -6,12 +6,49 @@ import ViteExpress from "vite-express"
 const app = express();
 const server = http.createServer(app);
 
+//cd backend/src
+//npm run start
+
 
 const io = new Server(server, { //모든 클라이언트가 접근 가능한 웹 소켓 서버
     cors: {
         origin: "*"
     }
 });
+
+//테스트용 플레이어 데이터 리스트
+const player1 = {
+    missions: [],
+    nickname: "qwer",
+    secret: [],
+    forbiddenWord: "아니"
+  };
+  
+  const player2 = {
+    missions: [],
+    nickname: "asdf",
+    secret: [],
+    forbiddenWord: "근데"
+  };
+
+  const player3 = {
+    missions: [],
+    nickname: "zxcv",
+    secret: [],
+    forbiddenWord: "뭐요"
+  };
+
+  const player4 = {
+    missions: [],
+    nickname: "asdf",
+    secret: [],
+    forbiddenWord: "마라염"
+  };
+
+  const playerList = [player1,player2,player3,player4];
+  //1명씩 접속할때마다 API에서 playerList 한번씩 받았다치고 테스트
+  let playerListCount = 0;
+  
 
 // 금칙어 목록
 const forbiddenWords = ['야', '응', '오키', '뭐', '팀장', '하이', '니', '뭔데', '나', '음', '인정', '정글', '나만무', '행복', '그만', '가보자', '베고파'];
@@ -41,10 +78,23 @@ io.on('connection', (client) => {               //client가 연결되면 실행
         roomForbiddenWords[roomnumber] = []; // 새로운 방 생성 시 초기화
     }
 
-    // 랜덤으로 금칙어 선택
-    const newForbiddenWord = forbiddenWords[Math.floor(Math.random() * forbiddenWords.length)];
+    //API에서 받은 플레이어리스트(현재는 테스트용)에서 금지어를 가져온다
+    const newForbiddenWord = playerList[playerListCount].forbiddenWord;
     const userForbiddenWord = { username: username, forbiddenword: newForbiddenWord };
     roomForbiddenWords[roomnumber].push(userForbiddenWord);
+
+    //테스트용 플레이 리스트 접속할때마다 테스트용 player 하나씩 가져옴
+    if(playerListCount === playerList.length -1){
+        playerListCount++;
+    }
+    else{
+        playerListCount = 0;
+    }
+
+    // 랜덤으로 금칙어 선택
+    // const newForbiddenWord = forbiddenWords[Math.floor(Math.random() * forbiddenWords.length)];
+    // const userForbiddenWord = { username: username, forbiddenword: newForbiddenWord };
+    // roomForbiddenWords[roomnumber].push(userForbiddenWord);
 
     // 클라이언트에 금칙어 전송
     client.emit('forbidden word', newForbiddenWord);

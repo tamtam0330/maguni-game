@@ -30,10 +30,10 @@ export function joinSession() {
 
       // When the HTML video has been appended to DOM...
       subscriber.on('videoElementCreated', event => {
-         // 비디오 element가 생성될 때 해당 element를 반환하여 GameRoomPage.jsx에서 필터링 처리
-        const videoElement = event.element;
-        // 이벤트 발생 시 videoElement를 콜백으로 호출
-        handleVideoElementCreated(videoElement, subscriber.stream.connection);
+      //    // 비디오 element가 생성될 때 해당 element를 반환하여 GameRoomPage.jsx에서 필터링 처리
+      //   const videoElement = event.element;
+      //   // 이벤트 발생 시 videoElement를 콜백으로 호출
+      //   handleVideoElementCreated(videoElement, subscriber.stream.connection);
 
          // Add a new <p> element for the user's nickname just below its video
          appendUserData(event.element, subscriber.stream.connection);
