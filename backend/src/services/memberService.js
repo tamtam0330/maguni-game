@@ -12,9 +12,14 @@ async function getAllWords(roomCode, nickname) {
     const result = await MemberDao.getAllWords(roomCode, nickname);
     return result;
 }
+async function getPlayersInfo(roomCode ) {
+    const result = await MemberDao.getPlayersInfo(roomCode);
+    return result;
+}
 
 module.exports = {
     insertWord,
     getAllWords,
-    participantGame
+    participantGame,
+    getPlayersInfo
 };

@@ -1,0 +1,60 @@
+.profile-card {
+    background-color: #f9fafb;
+    border-radius: 9999px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+    height: 50%;
+    /* max-width: 28rem; */
+  }
+  
+  .profile-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .profile-image-container {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: #e5e7eb;
+    overflow: hidden;
+  }
+  
+  .profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .profile-image-placeholder {
+    width: 100%;
+    height: 100%;
+    background-color: #d1d5db;
+  }
+  
+  .profile-text {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profile-nickname {
+    color: #1f2937;
+    font-weight: 600;
+    font-size: 1.125rem;
+  }
+  
+  .profile-number {
+    color: #6b7280;
+  }
+  
+  .menu-button {
+    color: #9ca3af;
+    padding: 0 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }

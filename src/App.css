@@ -16,26 +16,15 @@
   margin: 15px 0; /* 리스트 항목 간의 여백 추가 */
 }
 
-.Navbar {
+.beforeToggleContainer {
   overflow: hidden;
   background-color: #333;
   color: #ffffff;
-  position: fixed;
+
   top: 0;
   width: 100%;
 }
 
-.MessageInput {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  padding: 10px;
-}
-
-.MessageInput > input {
-  flex-grow: 1;
-}
 
 .Card {
   display: flex;
@@ -45,15 +34,9 @@
   flex-grow: 1;
 }
 
-.welcome-message {
-  font-weight: bold; /* 글씨를 굵게 */
-  font-size: 2.7em; /* 글꼴 크기 증가 */
-  color: #000000; /* 원하는 색상으로 변경 */
-  margin-bottom: 10px; /* 리스트 항목 간의 여백 추가 */
-}
 
 .forbiddenBox {
-  position: fixed;
+  /* position: fixed; */
   top: 50px; /* 원하는 위치로 조정 */
   right: 20px;
   width: 800px; /* 박스 너비 */
@@ -80,33 +63,23 @@
 }
 
 
-.split-container {
-  display: flex;
-  height: 100vh; /* 화면 전체 높이 */
+.afterToggleContainer {
+  display: flex; 
+  flex-direction:column;
+  height:fit-content;
   width: 100vW;
-
+  /* background-color: #333; */
 }
 
-/* 왼쪽, 오른쪽 영역 설정 */
-.left-section, .right-section {
-  flex: 1; /* 각각 50% 차지 */
+.startGameSection, .connectedUserList {
+  flex: 1;
   display: flex;
-  align-items: center; /* 세로 중앙 정렬 */
-  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; 
+  justify-content: center; 
   padding: 20px;
-}
+} 
 
-/* 각 섹션의 배경 색상 */
-.left-section {
-  background-color: #f1f1f1;
-  overflow: hidden;
-}
 
-.right-section {
-  background-color: #d1d1d1;
-  overflow: hidden;
-  color: #e70d0d;
-}
 
 .Card button {
   width: 200px;

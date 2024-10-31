@@ -110,6 +110,26 @@ const MemberDao = {
         return result; // updateOne의 결과 반환
     },
     
+    getPlayersInfo: async (roomCode) => {
+        let room;
+        let participants;
+        try {
+            await client.connect();
+            const db = client.db("database");
+            const rooms = db.collection("rooms");
+
+            // roomId에 따라 필터링
+            room = await rooms.findOne({ code: roomCode });
+            participants = room.participants;
+        } catch (error) {
+            throw error;
+        } finally {
+            // client.close(); // 클라이언트 연결 종료
+        }
+
+        return participants;
+    },
+    
     
 };
 

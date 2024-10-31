@@ -1,0 +1,21 @@
+/* .container {
+    background-color: #00FF00;
+    opacity: 0.5;
+} */
+
+/*남은 시간표시 바*/
+.barRemainTime {
+    background-color: #00FF00;
+    position:relative;
+}
+/*남은시간 바 옆에 폭탄 그림*/
+.barRemainTime::after {
+    position: absolute;
+    right:0;
+    top: 50%;
+    transform: translate(50%,-50%);
+    background-image: url('/src/assets/images/bombImage.png');
+}
+/*남은 시간 글자*/
+/* .label {
+} */

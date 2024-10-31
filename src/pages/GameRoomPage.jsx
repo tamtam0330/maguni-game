@@ -1,87 +1,124 @@
-import { useEffect, useRef, useState } from "react";
-import { joinSession, leaveSession } from '../../openvidu/app_openvidu.js';
-import { useLocation } from 'react-router-dom';
-import { calculateFilterPosition } from "../../filter/calculate-filter-position.ts";
-import { loadDetectionModel } from "../../filter/load-detection-model.js";
+import {useEffect, useState} from 'react'
 
-const videoSize = {
-    width: 640,
-    height: 480,
-};
-
+import { joinSession } from '../../openvidu/app_openvidu.js';
+import '../styles/gameroompage.css'
+import StatusBar from '../components/layout/StatusBar.jsx';
+import Footer from '../components/layout/Footer.jsx';
+import useRoomStore from '../components/store/roomStore.js';
+import {usePlayerStore}  from '../components/store/players.js';
 
 const GameRoomPage = () => {
-    const location = useLocation();
-    const username = location.state?.username;
-    const roomcode = location.state?.roomcode;
-    console.log(username, roomcode);
+const videoSize ={
+    width : 640,
+    height:480
+}
+    //store 상태관리
 
-    const canvasRef = useRef(null);
-    const initialLoadedRef = useRef(false);
-    const [status, setStatus] = useState("Initializing...");
+    //username을 usePlayerStore에서 가져옴
+    const username = usePlayerStore(state=>state.username)
+    //roomcode를 useRoomStore에서 가져옴
+    const roomcode = useRoomStore(state=>state.roomcode)
+    //players를 usePlayerStore에서 가져옴
+    const players = usePlayerStore(state=>state.players)
 
-    const estimateFacesLoop = (model, image, ctx) => {
-        const videoElement = document.getElementById('myVideo');
-    
-        if (!videoElement) {
-            console.log("취소됨");
-            return;
-        }
-    
-        model.estimateFaces(videoElement).then((face) => {
-            ctx.clearRect(0, 0, videoSize.width, videoSize.height);
-    
-            if (face[0]) {
-                const { x, y, width, height, angle } = calculateFilterPosition("faceFilter",face[0].keypoints);
-    
-                ctx.save(); // 현재 캔버스 상태 저장
-                ctx.translate(x + width / 2, y + height / 2); // 필터의 중심으로 이동
-                ctx.rotate(angle); // 얼굴 각도에 맞춰 회전
-                ctx.drawImage(image, -width / 2, -height / 2, width, height); // 중심을 기준으로 이미지 그리기
-                ctx.restore(); // 원래 캔버스 상태로 복원
+    // 음성인식 관련 상태
+    const [count, setCount] = useState(0);
+    const [isStoppedManually, setIsStoppedManually] = useState(false);
+
+    useEffect(() => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+
+        recognition.lang = 'ko-KR';
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        recognition.onstart = () => {
+            console.log('녹음이 시작되었습니다.');
+            document.getElementById('startButton').disabled = true;
+            document.getElementById('stopButton').disabled = false;
+        };
+
+        recognition.onresult = (event) => {
+            let finalTranscript = '';
+            let interimTranscript = '';
+
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                const result = event.results[i];
+                const transcript = result[0].transcript.trim();
+
+                if (result.isFinal) {
+                    finalTranscript += transcript + ' ';
+                    // 금칙어 카운트
+                    const word = "아니";
+                    const occurrences = (transcript.match(new RegExp(word, 'g')) || []).length;
+                    setCount(prev => prev + occurrences);
+                    const countElement = document.getElementById('count');
+                    if (countElement) {
+                        countElement.innerText = `"아니" 카운트: ${count + occurrences}`;
+                    }
+                } else {
+                    interimTranscript += transcript + ' ';
+                }
             }
-            requestAnimationFrame(() => estimateFacesLoop(model, image, ctx));
-        });
-    };
 
-    const startFiltering = () => {
-        const canvasContext = canvasRef.current?.getContext("2d");
-        if (!canvasContext || initialLoadedRef.current) return;
+            const transcriptElement = document.getElementById('subtitles');
+            if (transcriptElement) {
+                transcriptElement.innerText = finalTranscript + interimTranscript;
+            }
+        };
 
-        initialLoadedRef.current = true;
+        recognition.onend = () => {
+            console.log('녹음이 종료되었습니다.');
+            if (!isStoppedManually) {
+                console.log('자동으로 음성 인식 재시작');
+                recognition.start();
+            }
+        };
 
-        const image = new Image();
-        image.src = "Doge.png";
+        recognition.onerror = (event) => {
+            console.error('음성 인식 오류:', event.error);
+            if (event.error !== 'no-speech') {
+                recognition.stop();
+                recognition.start();
+            }
+        };
 
-        setStatus("Load Model...");
+        // 버튼 이벤트 설정
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
 
-        loadDetectionModel().then((model) => {
-            setStatus("Model Loaded");
-            requestAnimationFrame(() =>
-                estimateFacesLoop(model, image, canvasContext),
-            );
-        });
-    };
+        const handleStart = () => {
+            setIsStoppedManually(false);
+            recognition.start();
+        };
+
+        const handleStop = () => {
+            setIsStoppedManually(true);
+            recognition.stop();
+            setCount(0);
+            const countElement = document.getElementById('count');
+            if (countElement) {
+                countElement.innerText = `"아니" 카운트: 0`;
+            }
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        };
+
+        startButton?.addEventListener('click', handleStart);
+        stopButton?.addEventListener('click', handleStop);
+
+        // Clean up
+        return () => {
+            recognition.stop();
+            startButton?.removeEventListener('click', handleStart);
+            stopButton?.removeEventListener('click', handleStop);
+        };
+    }, [count, isStoppedManually]);
 
     return (
         <>
-            <nav className="navbar navbar-default">
-                <div className="container">
-                    <div className="navbar-header">
-                        <a className="navbar-brand nav-icon"
-                            href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-js"
-                            title="GitHub Repository" target="_blank">
-                            <i className="fa fa-github" aria-hidden="true"></i>
-                        </a>
-                        <a className="navbar-brand nav-icon"
-                            href="http://www.docs.openvidu.io/en/stable/tutorials/openvidu-js/"
-                            title="Documentation" target="_blank">
-                            <i className="fa fa-book" aria-hidden="true"></i>
-                        </a>
-                    </div>
-                </div>
-            </nav>
-
+            <StatusBar/>
             <div id="main-container" className="container">
                 <div id="join">
                     <div id="join-dialog" className="jumbotron vertical-center">
@@ -108,11 +145,7 @@ const GameRoomPage = () => {
                 <div id="session" style={{ display: 'none' }}>
                     <div id="session-header">
                         <h1 id="session-title"></h1>
-                        <input className="btn btn-large btn-danger"
-                            type="button"
-                            id="buttonLeaveSession"
-                            onClick={() => leaveSession()}
-                            value="Leave session" />
+                        
                     </div>
                     <div id="main-video" className="col-md-6">
                         <p></p><div className="webcam-container" style={{ position: 'relative', height: videoSize.height, width: videoSize.width }}>
@@ -121,41 +154,51 @@ const GameRoomPage = () => {
 
                             </div>
                             <div style={{ position: 'absolute', top: 0, left: 0 }}>
-                                <canvas ref={canvasRef} width={videoSize.width} height={videoSize.height} className="filter-canvas"></canvas>
+                                {/* <canvas ref={canvasRef} width={videoSize.width} height={videoSize.height} className="filter-canvas"></canvas> */}
 
                             </div>
                         </div>
                         <p className="status">{status}</p>
 
                         <div style={{ margin: '10px' }}>
-                            <button onClick={startFiltering}>필터 시작</button>
+                            {/* <button onClick={startFiltering}>필터 시작</button> */}
                             <button id="startButton">게임 시작</button>
                             <button id="stopButton" disabled>게임 종료</button>
                             <div id="count">금칙어(아니) 카운트: 0</div>
                         </div>
                     </div>
-                    <div id="video-container" className="col-md-6"><button>subscriber 필터 시작</button></div>
+                    <div id="video-container" className="col-md-6">
+                    </div>
+                    
+                    <div className="gameroom-sidebar">
+                        <div className="sidebar_wordlist">
+                            <div className="sidebar_index">금칙어 목록</div>
+                            <div className="sidebar_content">
+                                {players.map((player, index) => (
+                                    <div className="user-wordlist" key={index}>
+                                    <span>{player.nickname}</span>
+                                    <div>{player.words[0]}</div>
+                                </div> 
+                                ))}
+                            </div>
+                        </div >
+                        <div className="sidebar_mymission">
+                            <div className="sidebar_index">나의 미션</div>
+                            <div className="sidebar_content">sdf</div>
+                        </div>
+                        <div className="sidebar_goongye">
+                            <div className="sidebar_index">진행자</div>
+                            <div className="sidebar_content">sdf</div>
+                        </div>
+                    </div>
                     <div id="subtitles" style={{
-                        position: 'absolute',
-                        bottom: '10px',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        color: 'white',
-                        background: 'rgba(0, 0, 0, 0.7)',
-                        padding: '10px',
-                        borderRadius: '5px',
-                        fontSize: '18px',
-                        zIndex: 1000
                     }}>
                         자막
                     </div>
                 </div>
             </div>
-
+            <Footer username={username} roomcode={roomcode}/>
             <footer className="footer">
-                <div className="container">
-                    <div className="text-muted">OpenVidu © 2022</div>
-                </div>
             </footer>
         </>
     );

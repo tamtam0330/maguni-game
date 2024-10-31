@@ -9,7 +9,7 @@ app.use(cors({
     credentials: true             // 쿠키 공유가 필요한 경우 설정
 }));
 
-const PORT = process.env.PORT || 3000;
+const PORT =  3001;
 const IP = process.env.IP || "127.0.0.1";
 
 app.use(express.urlencoded({ extended: true }));
@@ -28,5 +28,5 @@ app.get("*", (_, res) => {
 });
 
 app.listen(PORT, IP, () => {
-    console.log("server is running at 3000");
+    console.log("server is running at 3001");
 });

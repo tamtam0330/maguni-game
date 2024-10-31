@@ -37,9 +37,20 @@ async function participantGame(req, res) {
     }
 }
 
+async function getPlayersInfo(req, res) {
+    const roomCode = req.params.roomCode;
 
+    const result = await MemberService.getPlayersInfo(roomCode);
+    if (result) {
+        res.json(result);
+    } else {
+        console.log("err : --");
+        // res.status(500).json({ error: error.message });
+    }
+}
 module.exports = {
     insertWord,
     getAllWords,
-    participantGame
+    participantGame,
+    getPlayersInfo
 };

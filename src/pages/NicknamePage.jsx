@@ -1,16 +1,23 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { usePlayerStore } from '../components/store/players';
 
 
 
 const NicknamePage = () => {
  
-    const [username, setUsername] = useState('');
+    
+  
+  //store을 import해와서, 그곳에 username을 저장함
+  const username = usePlayerStore(state=>state.username);
+  const setUsername = usePlayerStore(state=>state.setUsername);
+
+
     const navigate = useNavigate();
   
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
+      e.preventDefault();
       if (username.trim()) {
-        navigate('/hostguest', { state: { username: username } });
+        navigate('/hostguest');
       }
     };
   
