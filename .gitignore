@@ -24,3 +24,11 @@ dist-ssr
 *.sw?
 
 package-lock.json
+
+
+# backend 
+
+
+
+backend/src/.env
+backend/src/config/dbconfig.json
