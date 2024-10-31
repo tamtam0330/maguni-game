@@ -12,6 +12,11 @@ const [inputValue, setInputValue] = useState('');
 const [getCode,setGetCode] = useState('');
 const setPlayers = usePlayerStore(state=>state.setPlayers)
 
+const [gamers,setGamers] = useState([]);
+const [playerlist,setPlayerlist] = useState([]);
+const [index,setIndex] = useState(0);
+
+
 useEffect(() => {
   console.log(getCode)
 }, [getCode]);
@@ -27,7 +32,7 @@ const insertWord = ()=>{
         url: "http://localhost:3001/member/api/v1/word",
         data: {
             "roomCode": roomcode,
-            "nickname": username,
+            "nickname": index !=0? playerlist[index-1]: playerlist[playerlist.length-1],
             "word": inputValue
         },
     }).then((res)=>{
@@ -47,7 +52,6 @@ const getWords = ()=>{
         // console.log(res.data[0][0])
         setGetCode(res.data[0][0])
         return getPlayersInfo();
-        // setGetCode(prevGetCode => […prevGetCode, 'sk']);
     }).catch((err)=>{
         console.log(err)
     })
@@ -61,20 +65,39 @@ const getPlayersInfo = ()=>{
     }).then((res)=>{
         // console.log("players  :", res.data[0].words[0])
         setPlayers(res.data);
+        setGamers(res.data);
     }).catch((err)=>{
         console.log(err)
     })
 }
 
+useEffect(()=>{
+    getPlayersInfo();
+},[])
+
+useEffect(()=>{
+    setPlayerlist(gamers.map(gamer => gamer.nickname))
+    // console.log("gamers : ",gamers.length, gamers);
+    // console.log("playerlist: ",playerlist.length,playerlist)
+},[gamers])
+
+useEffect(()=>{
+    const idx = setIndex(playerlist.findIndex((player) => player === username));
+    console.log("index : ",idx)
+    // console.log("gamers : ",gamers.length, gamers);
+    // console.log("playerlist: ",playerlist.length,playerlist)
+},[playerlist])
+
 return (
   <div className="input-group" style={{ margin: '10px 0' }}>
+      <p>{index !=0? playerlist[index-1]: playerlist[playerlist.length-1]}</p>
       <input 
           type="text"
           className="form-control"
           value={inputValue}
           onChange={handleInputChange}
           placeholder="메시지를 입력하세요"
-      />
+          />
       <button 
           className="btn btn-primary"
           onClick={insertWord}
