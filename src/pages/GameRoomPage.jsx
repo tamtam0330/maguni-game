@@ -6,6 +6,12 @@ import StatusBar from '../components/layout/StatusBar.jsx';
 import Footer from '../components/layout/Footer.jsx';
 import useRoomStore from '../components/store/roomStore.js';
 import {usePlayerStore}  from '../components/store/players.js';
+import GameStartModal from '../components/modals/GameStartModal.jsx';
+import ForbiddenWordModal from '../components/modals/ForbiddenWordModal.jsx';
+import FreeTalkingModal from '../components/modals/FreeTalkingModal.jsx';
+import FeverTimeModal from '../components/modals/FeverTimeModal.jsx';
+import GameEndModal from '../components/modals/GameEndModal.jsx';
+import useGameStageStore from '../components/store/gameStage';
 
 const GameRoomPage = () => {
 const videoSize ={
@@ -24,6 +30,56 @@ const videoSize ={
     // 음성인식 관련 상태
     const [count, setCount] = useState(0);
     const [isStoppedManually, setIsStoppedManually] = useState(false);
+
+    const { 
+        currentStage, 
+        setStage, 
+        isModalOpen, 
+        setModalOpen,
+        sessionTime,
+        goToNextStage 
+    } = useGameStageStore();
+
+    // 모달 자동 제어
+    useEffect(() => {
+        // 게임 시작 시 첫 모달 표시
+        setModalOpen(true);
+
+        // 8초 후에 모달 닫기
+        const modalTimer = setTimeout(() => {
+            setModalOpen(false);
+        }, 8000);
+
+        return () => clearTimeout(modalTimer);
+    }, [currentStage]); // currentStage가 변경될 때마다 실행
+
+    // 게임 단계 자동 진행
+    useEffect(() => {
+        if (!isModalOpen && sessionTime === 0) {
+            // 현재 단계 시간이 끝나면 다음 단계로
+            goToNextStage();
+        }
+    }, [sessionTime, isModalOpen]);
+
+    // 현재 단계에 맞는 모달 렌더링
+    const renderModal = () => {
+        if (!isModalOpen) return null;
+
+        switch (currentStage) {
+            case 'gameStart':
+                return <GameStartModal />;
+            case 'forbiddenWordSelection':
+                return <ForbiddenWordModal />;
+            case 'freeTalking':
+                return <FreeTalkingModal />;
+            case 'feverTime':
+                return <FeverTimeModal />;
+            case 'gameEnd':
+                return <GameEndModal />;
+            default:
+                return null;
+        }
+    };
 
     useEffect(() => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -198,6 +254,7 @@ const videoSize ={
                 </div>
             </div>
             <Footer username={username} roomcode={roomcode}/>
+            {renderModal()} {/* 모달 렌더링 */}
             <footer className="footer">
             </footer>
         </>

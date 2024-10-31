@@ -1,57 +1,23 @@
-import {create} from 'zustand';
-import {scriptData} from './gameScripts';
-// import { duration } from 'html2canvas/dist/types/css/property-descriptors/duration';
 
-//전체 시간
+// Zustand 상태 관리 라이브러리 import
+import {create} from 'zustand';
+
+
+// 게임의 전체 시간을 관리하는 store
 const useStoreTime = create((set) => ({
-    time: 300, // 초기 시간 설정(5분)
+    // 게임 전체 진행 시간을 5분(300초)으로 설정
+    time: 300,
+    
+    // 전체 시간을 새로운 값으로 설정하는 함수
+    // @param {number} newTime - 설정할 새로운 시간 값
     setTime: (newTime) => set({ time: newTime }),
+    
+    // 매 초마다 전체 시간을 감소시키는 함수
+    // 시간이 0 이하로 내려가지 않도록 Math.max 사용
     decrementTime: () => set((state) => ({ time: Math.max(state.time - 1, 0) })),
 }));
 
 
-const useGameStore = create((set) => ({
-    // 각 단계의 기본 시간 (초 단위)
-    stages: {
-        gameStart:{duration:10,script:scriptData.gameStart[Math.floor(Math.random() * scriptData.gameStart.length)].text},
-        forbiddenWordSelection: { duration: 20, script: scriptData.forbiddenWordSelection[Math.floor(Math.random() * scriptData.forbiddenWordSelection.length)].text },
-        freeTalking: { duration: 120, script: scriptData.freeTalkStartAnnouncement[Math.floor(Math.random() * scriptData.freeTalkStartAnnouncement.length)].text },
-        feverTime: { duration: 60, script: scriptData.feverTime[Math.floor(Math.random() * scriptData.feverTime.length)].text }
-    },
-    
-    // 현재 단계 상태
-    currentStage: 'gameStart', // 초기 단계
-    sessionTime: 20, // 초기 남은 시간 (금칙어 선정 단계의 시간)
-    currentScript: scriptData.gameStart[Math.floor(Math.random() * scriptData.gameStart.length)].text, // 초기 대사 스크립트
 
-    // 단계 변경 함수
-    setStage: (stage) => set((state) => ({
-        currentStage: stage,
-        sessionTime: state.stages[stage].duration,
-        currentScript: state.stages[stage].script
-    })),
-
-    // 타이머 감소 함수
-    decrementTime: () => set((state) => ({
-        sessionTime: Math.max(state.sessionTime - 1, 0) // 시간 감소 (0 이하로 내려가지 않음)
-    })),
-
-    goToNextStage: () => set((state) => {
-        const nextStage = state.currentStage === 'forbiddenWordSelection'
-            ? 'freeTalking'
-            : state.currentStage === 'freeTalking'
-            ? 'feverTime'
-            : null;
-
-        if (nextStage) {
-            return {
-                currentStage: nextStage,
-                sessionTime: state.stages[nextStage].duration,
-                currentScript: state.stages[nextStage].script
-            };
-        }
-        return state;
-    })
-}));
-
+// 전체 시간 관리 store를 외부에서 사용할 수 있도록 export
 export default useStoreTime;
