@@ -1,10 +1,6 @@
-//그외에 추가해서 구현할 점
-
-//호스트가 게임 시작하기 누르면, 타이머 시작됨
-//다만 모달 뜨는 순간만 타이머 멈춤
-
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useStoreTime from "../store/gameInfoStore";
+import useGameStageStore from "../store/gameStage";
 import '../../styles/fulltimeclock.css'
 
 const timerStyles = {
@@ -21,18 +17,13 @@ const timerStyles = {
     }
 };
 
-const getSeconds = (time) => {
-    const seconds = Number(time % 60);
-    if(seconds < 10) {
-        return "0" + String(seconds);
-    } else {
-        return String(seconds);
-    }
-}
-
-const Timer = ({ isModalOpen }) => {
+const Timer = () => {
     const time = useStoreTime((state) => state.time);
     const decrementTime = useStoreTime((state) => state.decrementTime);
+    
+    // 게임 스테이지 스토어에서 모달/일시정지 상태 가져오기
+    const isModalOpen = useGameStageStore((state) => state.isModalOpen);
+    const isPaused = useGameStageStore((state) => state.isPaused);
 
     useEffect(() => {
         if (time === 0) {
@@ -41,13 +32,14 @@ const Timer = ({ isModalOpen }) => {
         }
 
         const timer = setInterval(() => {
-            if (!isModalOpen) {
+            // 모달이 열려있거나 일시정지 상태가 아닐 때만 시간 감소
+            if (!isModalOpen && !isPaused) {
                 decrementTime();
             }
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [time, isModalOpen, decrementTime]);
+    }, [time, isModalOpen, isPaused, decrementTime]);
 
     const getSeconds = (time) => String(time % 60).padStart(2, '0');
 

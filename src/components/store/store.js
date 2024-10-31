@@ -159,28 +159,3 @@ export const Globalstore = create((set) => ({
 //     }));
 //   },
   
-//   // WebRTC 연결 관리
-//   createPeerConnection: (userId) => {
-//     const { peers } = get();
-    
-//     const peerConnection = new RTCPeerConnection({
-//       iceServers: [
-//         { urls: 'stun:stun.l.google.com:19302' }
-//       ]
-//     });
-    
-//     peers.set(userId, peerConnection);
-//     return peerConnection;
-//   },
-  
-//   removePeerConnection: (userId) => {
-//     const { peers } = get();
-//     const peer = peers.get(userId);
-    
-//     if (peer) {
-//       peer.close();
-//       peers.delete(userId);
-//     }
-//   }
-// }));
-
