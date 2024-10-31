@@ -8,7 +8,7 @@ const GameEndModal = () => {
     useEffect(() => {
         const timer = setTimeout(() => {
             setModalOpen(false);
-        }, 8000);
+        }, 5000);
 
         return () => clearTimeout(timer);
     }, []);

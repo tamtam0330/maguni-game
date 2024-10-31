@@ -11,7 +11,7 @@ const GameStartModal = () => {
         const timer = setTimeout(() => {
             setModalOpen(false);
             setStage('forbiddenWordSelection');
-        }, 8000);
+        }, 5000);
 
         return () => clearTimeout(timer);
     }, []);

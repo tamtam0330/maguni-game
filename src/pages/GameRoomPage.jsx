@@ -68,14 +68,14 @@ const videoSize ={
         switch (currentStage) {
             case 'gameStart':
                 return <GameStartModal />;
-            case 'forbiddenWordSelection':
-                return <ForbiddenWordModal />;
-            case 'freeTalking':
-                return <FreeTalkingModal />;
-            case 'feverTime':
-                return <FeverTimeModal />;
-            case 'gameEnd':
-                return <GameEndModal />;
+            // case 'forbiddenWordSelection':
+            //     return <ForbiddenWordModal />;
+            // case 'freeTalking':
+            //     return <FreeTalkingModal />;
+            // case 'feverTime':
+            //     return <FeverTimeModal />;
+            // case 'gameEnd':
+            //     return <GameEndModal />;
             default:
                 return null;
         }

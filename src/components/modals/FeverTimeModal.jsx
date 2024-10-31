@@ -9,7 +9,7 @@ const FeverTimeModal = () => {
         const timer = setTimeout(() => {
             setModalOpen(false);
             setStage('gameEnd');
-        }, 8000);
+        }, 5000);
 
         return () => clearTimeout(timer);
     }, []);

@@ -9,7 +9,7 @@ const FreeTalkingModal = () => {
         const timer = setTimeout(() => {
             setModalOpen(false);
             setStage('feverTime');
-        }, 8000);
+        }, 5000);
 
         return () => clearTimeout(timer);
     }, []);

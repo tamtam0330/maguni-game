@@ -12,7 +12,7 @@ const ForbiddenWordModal = () => {
         const timer = setTimeout(() => {
             setModalOpen(false);
             setStage('freeTalking');
-        }, 8000);
+        }, 5000);
 
         return () => clearTimeout(timer);
     }, []);
