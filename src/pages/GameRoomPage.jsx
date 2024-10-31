@@ -15,38 +15,40 @@ const GameRoomPage = () => {
     const username = location.state?.username;
     const roomcode = location.state?.roomcode;
     console.log(username, roomcode);
-    const videoid = "local-video-undefined"
 
     const initialLoadedRef = useRef(false);
     const [status, setStatus] = useState("Initializing...");
 
     const estimateFacesLoop = (model, image, ctx, videoid) => {
-        console.log(videoid);
-        const videoElement = document.getElementById(`${videoid}`);
+        // console.log(videoid);
+        const videoElement = document.getElementById(videoid);
         console.log(videoElement);
-        console.log("1");
-        
-        
-        if (!videoElement) {
-            console.log("취소됨")
-            return;
+        // console.log("1");
 
+        if (!videoElement) {
+            console.log("비디오 요소가 존재하지 않습니다.")
+            return;
         }
 
         model.estimateFaces(videoElement).then((face) => {
+            // console.log(face);
             ctx.clearRect(0, 0, videoSize.width, videoSize.height);
             if (face[0]) {
                 const { x, y, width, height } = calculateFilterPosition(face[0].keypoints);
                 ctx.drawImage(image, x, y, width, height);
             }
-            requestAnimationFrame(() => estimateFacesLoop(model, image, ctx));
+            requestAnimationFrame(() => estimateFacesLoop(model, image, ctx, videoid));
+        })
+        .catch((error) => {
+            console.error('얼굴 인식 에러:', error); // 에러 로그 출력
         });
+
     };
 
-    const startFiltering = (username) => {
-        const canvasElement = document.getElementById("canvas-" + username);
-        const canvasContext = canvasElement.getContext("2d");
-        console.log("asdkfjlasfjasl: "+ canvasElement);
+    const startFiltering = (videoid) => {
+        const canvasElement = document.getElementById("canvas-asdf");
+        const canvasContext = canvasElement?.getContext("2d");
+        console.log(canvasContext);
         if (!canvasContext || initialLoadedRef.current) return;
 
         initialLoadedRef.current = true;
@@ -88,7 +90,7 @@ const GameRoomPage = () => {
                     <div id="join-dialog" className="jumbotron vertical-center">
                         <h1>Join a video session</h1>
                         <form className="form-group" onSubmit={(e) => {
-                            e.preventDefault();  
+                            e.preventDefault();
                             joinSession();
                         }}>
                             <p>
@@ -114,7 +116,10 @@ const GameRoomPage = () => {
                             id="buttonLeaveSession"
                             onClick={() => leaveSession()}
                             value="Leave session" />
-                        <button onClick={() => {startFiltering(username);}}>필터 시작</button>
+
+                        <div style={{ margin: '10px' }}>
+                            <button onClick={() => startFiltering("local-video-undefined")}>필터 시작</button>
+                        </div>
                         <p className="status">{status}</p>
                     </div>
 

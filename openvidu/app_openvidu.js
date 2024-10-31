@@ -157,7 +157,7 @@ function appendCanvas(videoElement, connection) {
    videoElement.parentNode.insertBefore(container, videoElement);
    container.appendChild(videoElement);
 
-   var canvas = document.createElement('canvas');
+   const canvas = document.createElement('canvas');
    canvas.className = "canvas";
    canvas.id = "canvas-" + userData;
    canvas.width = 640;
