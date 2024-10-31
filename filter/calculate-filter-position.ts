@@ -7,10 +7,10 @@ const eyePoint = {
 };
 
 const facePoint = {
-  leftSideTop: 130,     // 왼쪽 귀 윗부분을 의미하는 좌표
-  leftSideBottom: 250,  // 왼쪽 귀 아랫부분을 의미하는 좌표
-  rightSideTop: 360,    // 오른쪽 귀 윗부분을 의미하는 좌표
-  rightSideBottom: 480  // 오른쪽 귀 아랫부분을 의미하는 좌표
+  leftSideTop: 234,    // 왼쪽 귀 윗부분에 해당하는 인덱스
+  leftSideBottom: 454, // 왼쪽 귀 아랫부분에 해당하는 인덱스
+  rightSideTop: 4,     // 오른쪽 귀 윗부분에 해당하는 인덱스
+  rightSideBottom: 234 // 오른쪽 귀 아랫부분에 해당하는 인덱스
 }
 
 export function calculateFilterPosition(type,keypoints) {
@@ -43,36 +43,27 @@ function calculateEyeFilterPosition(keypoints){
   return { x, y, width, height, angle };
 }
 
-function calculateFaceFilterPosition(keypoints){
-  const faceWidthPaddingRatio = 0.35; // 얼굴 너비 대비 패딩 비율
-    const faceHeightPaddingRatio = 0.35; // 얼굴 높이 대비 패딩 비율
+function calculateFaceFilterPosition(keypoints) {
+  // 필터의 여백을 조정하기 위한 패딩 값
+  const xPadding = 50;
+  const yPadding = 50;
 
-    const leftSideTop = keypoints[facePoint.leftSideTop];
-    const rightSideTop = keypoints[facePoint.rightSideTop];
-    const leftSideBottom = keypoints[facePoint.leftSideBottom];
-    const rightSideBottom = keypoints[facePoint.rightSideBottom];
+  // 얼굴의 각 귀 위치를 기준으로 좌표 설정
+  const leftSideTop = keypoints[facePoint.leftSideTop];
+  const leftSideBottom = keypoints[facePoint.leftSideBottom];
+  const rightSideTop = keypoints[facePoint.rightSideTop];
+  const rightSideBottom = keypoints[facePoint.rightSideBottom];
 
-    // 얼굴의 너비와 높이 계산
-    const width = Math.abs(rightSideTop.x - leftSideTop.x);
-    const height = (Math.abs(leftSideBottom.y - leftSideTop.y) + Math.abs(rightSideBottom.y - rightSideTop.y)) / 2;
+  // 얼굴의 상단과 하단 중앙을 기준으로 필터 위치 및 크기 설정
+  const x = leftSideTop.x - xPadding;
+  const y = Math.min(leftSideTop.y, rightSideTop.y) - yPadding;
+  const width = (rightSideTop.x - leftSideTop.x) + xPadding * 2;
+  const height = Math.max(leftSideBottom.y, rightSideBottom.y) - Math.min(leftSideTop.y, rightSideTop.y) + yPadding * 2;
 
-    // 패딩을 포함한 폭과 높이 계산
-    const paddedWidth = width + width * faceWidthPaddingRatio;
-    const paddedHeight = height + height * faceHeightPaddingRatio;
+  // 얼굴 각도에 따라 필터를 회전시키기 위한 각도 계산
+  //const angle = Math.atan2(rightSideTop.y - leftSideTop.y, rightSideTop.x - leftSideTop.x);
+  const angle = 0;
 
-    // 중심점 계산
-    const centerX = (leftSideTop.x + rightSideTop.x) / 2;
-    const centerY = (leftSideTop.y + leftSideBottom.y) / 2;
-
-    // 얼굴 기울기를 기준으로 회전 각도 조정 (양쪽 상단 좌표 사용)
-    const angle = Math.atan2(rightSideTop.y - leftSideTop.y, rightSideTop.x - leftSideTop.x);
-
-    return {
-        x: centerX - paddedWidth / 2,
-        y: centerY - paddedHeight / 2,
-        width: paddedWidth,
-        height: paddedHeight,
-        angle
-    };
+  return { x, y, width, height, angle };
 }
 
