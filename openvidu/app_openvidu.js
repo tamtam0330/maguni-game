@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import { OpenVidu } from 'openvidu-browser';
-import {calculateFilterPosition} from '../../filter/calculate-filter-position.js';
+import {calculateFilterPosition} from '../filter/calculate-filter-position.ts';
+import { loadDetectionModel } from '../filter/load-detection-model.js';
 
 
 var OV;
