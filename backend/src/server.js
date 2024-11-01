@@ -10,7 +10,7 @@ app.use(cors({
 }));
 
 const PORT =  3001;
-const IP = process.env.IP || "127.0.0.1";
+const IP = process.env.IP || "192.168.0.186";
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

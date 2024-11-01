@@ -182,13 +182,46 @@ const startStreaming = async (session, OV, mediaStream) => {
    };
 
    const startFiltering = () => {
-       const image = new Image();
-       image.src = SUNGLASS;
-
-       loadDetectionModel().then((model) => {
-           requestAnimationFrame(() => estimateFacesLoop(model, image, ctx));
-       });
-   };
+      const image = new Image();
+      image.src = SUNGLASS;
+  
+      loadDetectionModel().then((model) => {
+          let showFilter = false;
+          let timeoutId = null;
+  
+          const handleStartPenaltyFilter = () => {
+              showFilter = true;
+              if (timeoutId) {
+                  clearTimeout(timeoutId);
+              }
+              timeoutId = setTimeout(() => {
+                  showFilter = false;
+              }, 2000); // Display the filter for 2 seconds
+          };
+  
+          // Listen for the custom event to start the penalty filter
+          window.addEventListener('startPenaltyFilter', handleStartPenaltyFilter);
+  
+          const estimateFacesLoop = () => {
+              model.estimateFaces(compositeCanvas).then((faces) => {
+                  ctx.clearRect(0, 0, compositeCanvas.width, compositeCanvas.height);
+  
+                  // Draw the video feed
+                  ctx.drawImage(video, 0, 0, compositeCanvas.width, compositeCanvas.height);
+  
+                  if (showFilter && faces[0]) {
+                      const { x, y, width, height } = calculateFilterPosition("eyeFilter", faces[0].keypoints);
+                      ctx.drawImage(image, x, y, width, height);
+                  }
+  
+                  requestAnimationFrame(estimateFacesLoop);
+              });
+          };
+  
+          // Start the face detection loop
+          requestAnimationFrame(estimateFacesLoop);
+      });
+  };
 
    // 비디오 메타데이터 로드 시 실행
    await new Promise((resolve) => {

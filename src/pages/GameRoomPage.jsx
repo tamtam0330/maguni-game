@@ -11,8 +11,6 @@ const GameRoomPage = () => {
 const videoSize ={
     width : 640,
     height:480
-
-    
 }
     //store 상태관리
 
@@ -27,7 +25,23 @@ const videoSize ={
     const [count, setCount] = useState(0);
     const [isStoppedManually, setIsStoppedManually] = useState(false);
 
- 
+    useEffect(() => {
+        // ... existing code ...
+    
+        const penaltyButton = document.getElementById('penaltyButton');
+    
+        const handlePenalty = () => {
+            // Emit an event that the filter should display for 2 seconds
+            const event = new CustomEvent('startPenaltyFilter');
+            window.dispatchEvent(event);
+        };
+    
+        penaltyButton?.addEventListener('click', handlePenalty);
+    
+        return () => {
+            penaltyButton?.removeEventListener('click', handlePenalty);
+        };
+    }, [count, isStoppedManually]);
 
     useEffect(() => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -166,11 +180,11 @@ const videoSize ={
                         <p className="status">{status}</p>
 
                         <div style={{ margin: '10px' }}>
-                            {/* <button onClick={startFiltering}>필터 시작</button> */}
-                            <button id="startButton">게임 시작</button>
-                            <button id="stopButton" disabled>게임 종료</button>
-                            <div id="count">금칙어(아니) 카운트: 0</div>
-                        </div>
+    <button id="startButton">게임 시작</button>
+    <button id="stopButton" disabled>게임 종료</button>
+    <button id="penaltyButton">벌칙 시작</button> {/* New Penalty Button */}
+    <div id="count">금칙어(아니) 카운트: 0</div>
+</div>
                     </div>
                     <div id="video-container" className="col-md-6">
                     </div>

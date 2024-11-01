@@ -23,7 +23,7 @@ function App() {
 
   function connectToChatServer() {
     console.log('connectToChatServer');
-    const _socket = io('http://localhost:3000', {
+    const _socket = io('http://192.168.0.186:3000', {
       autoConnect: false,
       query: {
         username: username,
