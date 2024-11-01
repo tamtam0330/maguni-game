@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { OpenVidu } from 'openvidu-browser';
+import {calculateFilterPosition} from '../../filter/calculate-filter-position.js';
 
 
 var OV;
@@ -153,6 +154,32 @@ const startStreaming = async(session,OV,mediaStream) => {
 
       animationFrameID = requestAnimationFrame(render);
    };
+
+   const estimateFacesLoop = (model, image, ctx) => {
+  
+      model.estimateFaces(compositeCanvas).then((face) => {
+          ctx.clearRect(0, 0, compositeCanvas.width, compositeCanvas.height);
+          if (face[0]) {
+              const { x, y, width, height } = calculateFilterPosition(face[0].keypoints);
+              ctx.drawImage(image, x, y, width, height);
+          }
+          requestAnimationFrame(() => estimateFacesLoop(model, image, ctx));
+      });
+  };
+  
+  const startFiltering = () => {
+  
+      const image = new Image();
+      image.src = "sunglasses.png";
+  
+      loadDetectionModel().then((model) => {
+          requestAnimationFrame(() =>
+              estimateFacesLoop(model, image, ctx),
+          );
+      });
+  };
+
+  startFiltering();
 
    //비디오 메타 데이터 로딩 되면 비디오 실행
    await new Promise((resolve) => {

@@ -6,11 +6,14 @@ import StatusBar from '../components/layout/StatusBar.jsx';
 import Footer from '../components/layout/Footer.jsx';
 import useRoomStore from '../components/store/roomStore.js';
 import {usePlayerStore}  from '../components/store/players.js';
+import { calculateFilterPosition } from '../../filter/calculate-filter-position.js';
 
 const GameRoomPage = () => {
 const videoSize ={
     width : 640,
     height:480
+
+    
 }
     //store 상태관리
 
