@@ -138,7 +138,7 @@ function beolchick() {
     }, [players]); // players가 변경될 때마다 실행
 
     function connectToRoom() {
-        const _socket = io('http://localhost:3002', {
+        const _socket = io('http://13.124.180.166:3002', {
           autoConnect: false,
           query: {
             username,

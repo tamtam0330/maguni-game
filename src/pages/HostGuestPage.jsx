@@ -35,7 +35,7 @@ const HostGuestPage = () => {
   function connectToChatServer() {
     console.log('connectToChatServer');
     role==='host' ? createRoom() : joinRoom();
-    const _socket = io('http://localhost:3000', {
+    const _socket = io('http://13.124.180.166:3000', {
       autoConnect: false,
       query: {
         username: username,
@@ -50,7 +50,7 @@ const HostGuestPage = () => {
   function createRoom() {
     return axios({
         method: "POST",
-        url: "http://localhost:3001/room/api/v1",
+        url: "http://13.124.180.166:3001/room/api/v1",
         data: {
             "roomCode": generatedCode,
             "nickname": username,
@@ -65,7 +65,7 @@ const HostGuestPage = () => {
 function joinRoom() {
   return axios({
       method: "POST",
-      url: "http://localhost:3001/member/participant/game/api/v1",
+      url: "http://13.124.180.166:3001/member/participant/game/api/v1",
       data: {
           "roomCode": roomcode,
           "nickname": username,

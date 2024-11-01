@@ -21,7 +21,7 @@ function GameSocket() {
   ];
 
   function connectToRoom() {
-    const _socket = io('http://localhost:3002', {
+    const _socket = io('http://13.124.180.166:3002', {
       autoConnect: false,
       query: {
         username,
