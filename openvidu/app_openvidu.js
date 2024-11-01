@@ -1,8 +1,11 @@
 import $ from 'jquery';
 import { OpenVidu } from 'openvidu-browser';
 
+
 var OV;
 var session;
+export var subscribers = [];
+var FRAME_RATE = 30;
 
 
 /* OPENVIDU METHODS */
@@ -26,7 +29,15 @@ export function joinSession() {
    session.on('streamCreated', event => {
 
       // Subscribe to the Stream to receive it. HTML video will be appended to element with 'video-container' id
-      var subscriber = session.subscribe(event.stream, 'video-container');
+      //let subscriber = session.subscribe(event.stream, 'video-container');
+
+      //등록하되 생성하진 않음
+      let subscriber = session.subscribe(event.stream, 'video-container');
+
+      subscribers = [...subscribers,subscriber];
+
+      //const videoContainer = document.getElementById('video-container');
+
 
       // When the HTML video has been appended to DOM...
       subscriber.on('videoElementCreated', event => {
@@ -45,6 +56,9 @@ export function joinSession() {
 
       // Delete the HTML element with the user's nickname. HTML videos are automatically removed from DOM
       removeUserData(event.stream.connection);
+
+      subscribers.filter((sub) =>
+      sub !== event.stream.streamManager);
    });
 
    // On every asynchronous exception...
@@ -62,6 +76,15 @@ export function joinSession() {
       // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
       session.connect(token, { clientData: myUserName })
          .then(() => {
+            OV.getUserMedia({
+               audioSource: false,
+               videoSource: undefined,
+               // resolution: '1280x720',
+               resolution: '640x480',
+               frameRate: FRAME_RATE,
+            }).then((mediaStream) =>{
+               startStreaming(session,OV,mediaStream);
+            });
 
             // --- 5) Set page layout for active call ---
 
@@ -71,35 +94,97 @@ export function joinSession() {
 
             // --- 6) Get your own camera stream with the desired properties ---
 
-            var publisher = OV.initPublisher('video-container', {
-               audioSource: undefined, // The source of audio. If undefined default microphone
-               videoSource: undefined, // The source of video. If undefined default webcam
-               publishAudio: true,     // Whether you want to start publishing with your audio unmuted or not
-               publishVideo: true,     // Whether you want to start publishing with your video enabled or not
-               resolution: '640x480',  // The resolution of your video
-               frameRate: 30,         // The frame rate of your video
-               insertMode: 'APPEND',   // How the video is inserted in the target element 'video-container'
-               mirror: false          // Whether to mirror your local video or not
-            });
+            // var publisher = OV.initPublisher('video-container', {
+            //    audioSource: undefined, // The source of audio. If undefined default microphone
+            //    videoSource: undefined, // The source of video. If undefined default webcam
+            //    publishAudio: true,     // Whether you want to start publishing with your audio unmuted or not
+            //    publishVideo: true,     // Whether you want to start publishing with your video enabled or not
+            //    resolution: '640x480',  // The resolution of your video
+            //    frameRate: 30,         // The frame rate of your video
+            //    insertMode: 'APPEND',   // How the video is inserted in the target element 'video-container'
+            //    mirror: false          // Whether to mirror your local video or not
+            // });
 
             // --- 7) Specify the actions when events take place in our publisher ---
 
-            // When our HTML video has been added to DOM...
-            publisher.on('videoElementCreated', function (event) {
-               initMainVideo(event.element, myUserName);
-               appendUserData(event.element, myUserName);
-               event.element['muted'] = true;
-            });
+            // // When our HTML video has been added to DOM...
+            // publisher.on('videoElementCreated', function (event) {
+            //    initMainVideo(event.element, myUserName);
+            //    appendUserData(event.element, myUserName);
+            //    event.element['muted'] = true;
+            // });
 
-            // --- 8) Publish your stream ---
+            // // --- 8) Publish your stream ---
 
-            session.publish(publisher);
+            // session.publish(publisher);
 
          })
          .catch(error => {
             console.log('There was an error connecting to the session:', error.code, error.message);
          });
    });
+}
+
+const startStreaming = async(session,OV,mediaStream) => {
+   //2초 대기(왜하는지 모르겠음)
+   await new Promise((resolve) => setTimeout(resolve,2000));
+
+   const video = document.createElement('video');
+   video.srcObject = mediaStream;
+   video.autoplay = true;
+   video.playsInline = true;
+
+   const compositeCanvas = document.createElement('canvas');
+   compositeCanvas.width = 640;
+   compositeCanvas.height = 480;
+
+   const ctx = compositeCanvas.getContext('2d');
+
+   let animationFrameID;
+
+   const render = () =>{
+      ctx.drawImage(
+         video,
+         0,
+         0,
+         compositeCanvas.width,
+         compositeCanvas.height,
+      );
+
+      animationFrameID = requestAnimationFrame(render);
+   };
+
+   //비디오 메타 데이터 로딩 되면 비디오 실행
+   await new Promise((resolve) => {
+      video.onloadedmetadata = () => {
+         video.play();
+         render();
+         resolve();
+      };
+   });
+
+   const compositeStream = compositeCanvas.captureStream(FRAME_RATE);
+
+   const publisher = OV.initPublisher(undefined,{
+      audioSource: mediaStream.getAudioTracks()[0],
+      videoSource: compositeStream.getVideoTracks()[0],
+      frameRate: FRAME_RATE,
+      videoCodec: 'H264',
+   });
+
+   await session.publish(publisher);
+
+   const videoContainer = document.getElementById('video-container');
+   videoContainer.appendChild(video);
+   videoContainer.appendChild(compositeCanvas);
+
+    // 컴포넌트 언마운트 시 정리 함수 반환
+//     return () => {
+//       if (animationFrameId) {
+//           cancelAnimationFrame(animationFrameId);
+//       }
+//   };
+// } 
 }
 
 export function leaveSession() {
