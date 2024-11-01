@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 dotenv.config(); // .env 파일의 변수를 불러옵니다.
 const cors = require("cors");
 app.use(cors({
-    origin: "http://13.124.180.166:5175", // 클라이언트 도메인으로 변경
+    origin: ["http://13.124.180.166:5173","http://13.124.180.166:5174","http://13.124.180.166:5175"], // 클라이언트 도메인으로 변경
     methods: ["GET", "POST", "PATCH", "DELETE"],
     credentials: true,
 }));
