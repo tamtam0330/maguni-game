@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react'
 
-import { joinSession,subscribers,leaveSession } from '../../openvidu/app_openvidu.js';
+import { joinSession } from '../../openvidu/app_openvidu.js';
 import '../styles/gameroompage.css'
 import StatusBar from '../components/layout/StatusBar.jsx';
 import Footer from '../components/layout/Footer.jsx';
@@ -119,6 +119,7 @@ const videoSize ={
             stopButton?.removeEventListener('click', handleStop);
         };
     }, [count, isStoppedManually]);
+
 
     return (
         <>

@@ -2,6 +2,7 @@ import $ from 'jquery';
 import { OpenVidu } from 'openvidu-browser';
 import {calculateFilterPosition} from '../filter/calculate-filter-position.ts';
 import { loadDetectionModel } from '../filter/load-detection-model.js';
+import SUNGLASS from "../public/img/sunglasses.png";
 
 
 var OV;
@@ -161,7 +162,8 @@ const startStreaming = async(session,OV,mediaStream) => {
       model.estimateFaces(compositeCanvas).then((face) => {
           ctx.clearRect(0, 0, compositeCanvas.width, compositeCanvas.height);
           if (face[0]) {
-              const { x, y, width, height } = calculateFilterPosition(face[0].keypoints);
+              const { x, y, width, height } = calculateFilterPosition("eyeFilter",face[0].keypoints);
+              console.log({x, y, width, height});
               ctx.drawImage(image, x, y, width, height);
           }
           requestAnimationFrame(() => estimateFacesLoop(model, image, ctx));
@@ -171,7 +173,7 @@ const startStreaming = async(session,OV,mediaStream) => {
   const startFiltering = () => {
   
       const image = new Image();
-      image.src = "sunglasses.png";
+      image.src = SUNGLASS;
   
       loadDetectionModel().then((model) => {
           requestAnimationFrame(() =>
@@ -179,8 +181,6 @@ const startStreaming = async(session,OV,mediaStream) => {
           );
       });
   };
-
-  startFiltering();
 
    //비디오 메타 데이터 로딩 되면 비디오 실행
    await new Promise((resolve) => {
