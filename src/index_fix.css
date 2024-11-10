@@ -1,127 +1,160 @@
 @font-face {
-  font-family: 'Ownglyph_JAEGEONSA-Rg';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_JAEGEONSA-Rg.woff2') format('woff2');
-  font-weight: normal;
-  font-style: normal;
-}
-
-/* 전체 앱에 폰트 적용하고 싶다면 */
-body {
-  font-family: 'Ownglyph_JAEGEONSA-Rg', sans-serif;
-}
-
-
-:root {
-  background-color: #F5E6D3;
-  /* min-width:990px; */
-  width:100vw;
-  /* min-height:100vh; */
-  height:100%;
-  max-height:fit-content;
-  /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
-  line-height: 1.5;
-  font-weight: 400;
-  /* font-synthesis: none; */
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-  text: #2D3436
-}
-
-html, body {
-  min-height:100vh;
-  margin:0;
-  padding:0; 
-}
-
-
-
-
-input {
-  border-radius:4px;
-  background-color: #AC2F2F;
-  border: 1px solid white;
-  color: white;
-  height: 40px;
-  width:300px
-
-}
-
-ul {
-  list-style: none;
-  padding-left: 0;
-}
-
-@keyframes blinking-border {
-  0% {
-    border-color: red;
-    box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.5);
+    font-family: 'Ownglyph_JAEGEONSA-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_JAEGEONSA-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
   }
-  50% {
-    border-color: transparent;
-    box-shadow: none;
+  
+  /* 전체 앱에 폰트 적용하고 싶다면 */
+  body {
+    font-family: 'Ownglyph_JAEGEONSA-Rg', sans-serif;
   }
-  100% {
-    border-color: red;
-    box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.5);
+  
+  
+  :root {
+    background-color: #F5E6D3;
+    /* min-width:990px; */
+    width:100vw;
+    /* min-height:100vh; */
+    height:100%;
+    max-height:fit-content;
+    /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
+    line-height: 1.5;
+    font-weight: 400;
+    /* font-synthesis: none; */
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    text: #2D3436
   }
-}
-
-.blinking-border {
-  animation: blinking-border 1s infinite;
-  border-width: 4px;
-  border-style: solid;
-  border-radius: 4px;
-  padding: 8px; /* Adjust this value for the desired spacing */
-  box-sizing: border-box; /* Ensures padding doesn’t increase the input size */
-}
-
-.rule-container {
-  position: relative;
-  display: inline-block;
-  padding-top: 10px;
-}
-
-.ruleDescribe {
-  width: 42px;
-  height: 42px;
-  cursor: pointer;
-  position:relative;
-}
-
-.speech-bubble {
-  position: absolute;
-  top: 60px;
-  left: -100px;
-  width: 300px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-  opacity: 0;
-  transform: scale(0.9);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  word-wrap: break-word;
-}
-
-.speech-bubble::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 100px;
-  border-width: 8px;
-  border-style: solid;
-  border-color: #f9f9f9 transparent transparent transparent;
-}
-
-.rule-container:hover .speech-bubble {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.nextButton {
-  height: 36px;
-}
+  
+  html, body {
+    min-height:100vh;
+    margin:0;
+    padding:0; 
+  }
+  
+  
+  
+  
+  input {
+    border-radius:4px;
+    background-color: #AC2F2F;
+    border: 1px solid white;
+    color: white;
+    height: 40px;
+    width:300px
+  
+  }
+  
+  ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  @keyframes blinking-border {
+    0% {
+      border-color: red;
+      box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.5);
+    }
+    50% {
+      border-color: transparent;
+      box-shadow: none;
+    }
+    100% {
+      border-color: red;
+      box-shadow: 0 0 5px 2px rgba(255, 0, 0, 0.5);
+    }
+  }
+  
+  .blinking-border {
+    animation: blinking-border 1s infinite;
+    border-width: 4px;
+    border-style: solid;
+    border-radius: 4px;
+    padding: 8px; /* Adjust this value for the desired spacing */
+    box-sizing: border-box; /* Ensures padding doesn’t increase the input size */
+  }
+  
+  .rule-container {
+    position: relative;
+    display: inline-block;
+    padding-top: 10px;
+  }
+  
+  .ruleDescribe {
+    width: 42px;
+    height: 42px;
+    cursor: pointer;
+    position:relative;
+  }
+  
+  .speech-bubble-vertical {
+    position: absolute;
+    top: 60px;
+    left: -300px;
+    width: 300px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    word-wrap: break-word;
+  }
+  
+  .speech-bubble-vertical::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 100px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: #f9f9f9 transparent transparent transparent;
+  }
+  
+  .speech-bubble-horizontal {
+    position: absolute;
+    bottom: 10px; /* 아래쪽으로 오프셋 설정 */
+    right: -400px; /* 오른쪽으로 오프셋 설정 */
+    width: 300px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    word-wrap: break-word;
+  }
+  
+  .speech-bubble-horizontal::after {
+    content: '';
+    position: absolute;
+    top: 50%; /* 세로 가운데 정렬 */
+    right: -8px; /* 꼬리가 오른쪽에 위치 */
+    transform: translateY(-50%);
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent transparent #f9f9f9;
+  }
+  
+  .rule-container:hover .speech-bubble-vertical {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .rule-container:hover .speech-bubble-horizontal {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  .nextButton {
+    height: 36px;
+  }

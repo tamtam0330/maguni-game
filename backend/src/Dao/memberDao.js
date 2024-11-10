@@ -1,7 +1,7 @@
 const { MongoClient } = require("mongodb");
 const dbconfig = require("../config/dbconfig.json");
 
-const url = `mongodb+srv://${dbconfig.id}:${dbconfig.password}@cluster0.jmw2t.mongodb.net/database?retryWrites=true&w=majority&appName=Cluster0`;
+const url = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PW}@cluster0.jmw2t.mongodb.net/database?retryWrites=true&w=majority&appName=Cluster0`;
 const client = new MongoClient(url, {
     maxPoolSize: 10,
 });

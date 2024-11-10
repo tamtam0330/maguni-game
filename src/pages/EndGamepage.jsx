@@ -47,7 +47,7 @@ const EndGamepage = () => {
 
         return axios({
             method: 'POST',
-            url: 'http://localhost:3001/member/game/api/v1',
+            url: 'https://maguni-game-92g6.onrender.com/member/game/api/v1',
             data: {
                 roomCode: roomCode,
                 nickname: username,
@@ -64,7 +64,7 @@ const EndGamepage = () => {
 
     const getResults = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/member/game/api/v1/${roomCode}`);
+            const response = await axios.get(`https://maguni-game-92g6.onrender.com/member/game/api/v1/${roomCode}`);
             console.log("서버 응답 데이터:", response.data);
             setAnimationResult(response.data);
         } catch (err) {
@@ -135,20 +135,20 @@ const EndGamepage = () => {
         playMusic();
     }, [setIsPlay]);
 
-    //모달 띄우는 함수
-    // const showModal = () => {
-    //     setShowModal(false);
-    // }
+    // //모달 띄우는 함수
+    // // const showModal = () => {
+    // //     setShowModal(false);
+    // // }
     
-    useEffect(() => {
-        // 기존 audio 태그 중지 또는 음소거
-        const existingAudio = document.getElementById('bgm');
-        if (existingAudio) {
-            existingAudio.pause();  // 중지
-            existingAudio.muted = true;  // 음소거
-        }
+    // useEffect(() => {
+    //     // 기존 audio 태그 중지 또는 음소거
+    //     const existingAudio = document.getElementById('bgm');
+    //     if (existingAudio) {
+    //         existingAudio.pause();  // 중지
+    //         existingAudio.muted = true;  // 음소거
+    //     }
 
-    }, []);
+    // }, []);
 
 
     useEffect(() => {

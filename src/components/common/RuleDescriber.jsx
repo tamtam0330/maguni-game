@@ -2,7 +2,7 @@ import RuleDescribe from '../../assets/images/questionIcon.png';
 import { useState } from 'react';
 import { ruleData } from '../../assets/utils/gameScripts';
 
-const RuleDescriber = () =>{
+const RuleDescriber = ({direction = "speech-bubble-vertical"}) =>{
     const [isBubbleVisible, setIsBubbleVisible] = useState(false);
 
     const toggleBubble = () => {
@@ -19,7 +19,7 @@ const RuleDescriber = () =>{
           onClick={toggleBubble} 
         />
         {isBubbleVisible && (
-                <div className="speech-bubble">
+                <div className={direction}>
                     {ruleData.GameRule.map((rule, index) => (
                         <p key={index}>{rule}</p>
                     ))}

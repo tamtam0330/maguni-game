@@ -55,7 +55,7 @@ const NicknamePage = () => {
                     className='nicknameRandomBtn' 
                     onClick={createNickName}
                 >
-                    랜덤 닉네임 생성하기 >>
+                    랜덤 닉네임 생성하기
                 </a>
             </div>
         </GameLayout>

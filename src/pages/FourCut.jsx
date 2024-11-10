@@ -15,6 +15,7 @@ import WallImage from '../assets/images/endPage_bgImage.webp';
 
 
 const FourCut = () => {
+    const navigate = useNavigate();
     const divRef = useRef(null);
     const [showModal, setShowModal] = useState(true); // 초기에 모달 표시
     const [selectedFrame, setSelectedFrame] = useState(null);
@@ -33,7 +34,7 @@ const FourCut = () => {
     // 서버에서 이미지 가져오기
     const fetchImages = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/upload/api/v1/${roomCode}`);
+            const response = await axios.get(`https://maguni-game-92g6.onrender.com/upload/api/v1/${roomCode}`);
             setImageList(response.data);
         } catch (error) {
             console.error("이미지 로딩 실패:", error);
@@ -59,7 +60,10 @@ const FourCut = () => {
         )}:${String(date.getSeconds()).padStart(2, "0")}`;
 
         try {
-            const canvas = await html2canvas(divRef.current, { scale: 2 });
+            const canvas = await html2canvas(divRef.current, {     
+                scale: 2,
+                useCORS: true, 
+            });
             canvas.toBlob((blob) => {
                 if (blob) {
                     saveAs(blob, `${formattedDate}.png`);
@@ -69,7 +73,7 @@ const FourCut = () => {
             console.error("이미지 변환 실패:", error);
         }
     };  
-    const navigate = useNavigate();
+
 
 
     function quitGame() {
@@ -141,8 +145,7 @@ const FourCut = () => {
                                         }}
                                     >
                                         <img
-                                            // src={`../../backend/src/images/${image}`}
-                                            src={`http://localhost:3001/photos/${image}`}
+                                            src={`https://maguni-game-92g6.onrender.com/photos/${image}`}
                                             // src={image}
                                             alt={`사진 ${index + 1}`}
                                             style={{
@@ -150,6 +153,7 @@ const FourCut = () => {
                                                 height: "256px",
                                                 objectFit: "cover"
                                             }}
+                                            crossOrigin="anonymous"
                                         />
                                     </div>
                                 ))}
@@ -171,24 +175,6 @@ const FourCut = () => {
                             이미지 다운로드
                         </button>
                     </div>
-
-
-
-
-                    {/* 이미지 목록 */}
-                    {/* <div className="image-list">
-                        <h2>저장된 사진</h2>
-                        <div className="image-grid-preview">
-                            {imageList.map((image, index) => (
-                                <img
-                                    key={index}
-                                    src={`http://localhost:3001/images/${image}`}
-                                    alt={`이미지 ${index + 1}`}
-                                    className="preview-image"
-                                />
-                            ))}
-                        </div>
-                    </div> */}
                 </>
             )}
         </div>

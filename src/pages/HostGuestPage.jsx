@@ -102,7 +102,7 @@ const HostGuestPage = () => {
     function createRoom() {
         return axios({
             method: "POST",
-            url: "http://localhost:3001/room/api/v1",
+            url: "https://maguni-game-92g6.onrender.com/room/api/v1",
             data: {
                 "roomCode": generatedCode,
                 "nickname": username,
@@ -117,7 +117,7 @@ const HostGuestPage = () => {
     function joinRoom() {
         return axios({
             method: "POST",
-            url: "http://localhost:3001/member/participant/game/api/v1",
+            url: "https://maguni-game-92g6.onrender.com/member/participant/game/api/v1",
             data: {
                 "roomCode": roomcode,
                 "nickname": username,
@@ -132,7 +132,7 @@ const HostGuestPage = () => {
     const checkRoom = () => {
         return axios({
             method: 'GET',
-            url: `http://localhost:3001/room/api/v1/${roomcode}`,
+            url: `https://maguni-game-92g6.onrender.com/room/api/v1/${roomcode}`,
         })
             .then((res) => {
                 return res.data['success']
@@ -377,7 +377,7 @@ const HostGuestPage = () => {
                                 onClick={() => { Gotogameroompage(); setUserRole(role); }} 
                                 text="시작하기"
                             />
-                            <RuleDescriber />
+                            <RuleDescriber direction='speech-bubble-horizontal'/>
                         </div>
                     </div>
                 </div>
